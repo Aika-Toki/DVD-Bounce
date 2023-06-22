@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="IE=edge"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>DvD</title>
+    <style>
+      @keyframes marquee-animation-down {
+        0% {
+          transform: translate(0%, 0px);
+        }
+        100% {
+          transform: translate(0%, var(--areaHeight));
+        }
+      }
+      @keyframes marquee-animation-left {
+        0% {
+          transform: translate(0px, 0px);
+        }
+        100% {
+          transform: translate(var(--areaWidth), 0px);
+        }
+      }
+      .marquee-down-alternate {
+        animation: marquee-animation-down linear infinite alternate paused;
+      }
+      .marquee-left-alternate {
+        animation: marquee-animation-left linear infinite alternate paused;
+      }
+    </style>
+  </head>
+  <body style="background: #111; margin: 0">
+    <div
+      width="1650"
+      height="840"
+      class="marquee-down-alternate"
+    >
+      <div class="marquee-left-alternate">
+        <img
+          src="https://livedoor.blogimg.jp/a3_3/imgs/f/d/fd45f92b-s.png"
+          style="width: var(--logoWidth); height: var(--logoHeight)"
+        />
+      </div>
+    </div>
+    <script>
+      let color = 0;
+      let intervalProcess = [];
+      let resizeProcess = 0;
+      window.onresize = () => {
+        if (resizeProcess) clearTimeout(resizeProcess);
+        resizeProcess = setTimeout(() => {
+          location.reload();
+        }, 2000);
+      };
+      const searchQuery = () => {
+        let query = {};
+        Array.from(
+          location.search.slice(1, location.search.length).split("&")
+        ).forEach((e) => {
+          let param = e.split("=");
+          query[param[0]] = param[1];
+        });
+        return query;
+      };
+      let SQuery = searchQuery();
+      let options = {
+        speed: SQuery.s || 12,
+        logoSize: SQuery.l || 350,
+      };
+      const optionSet = (speed, logoSize) => {
+        let opt = [];
+        opt.push(`s=${speed || 12}`);
+        opt.push(`l=${logoSize || 350}`);
+        location.search = "?" + opt.join("&");
+      };
+      const load = () => {
+        intervalProcess.forEach((e) => {
+          clearInterval(e);
+        });
+        let logoHeight = Math.round(options.logoSize / 2);
+        document
+          .querySelector(":root")
+          .style.setProperty("--areaHeight", innerHeight - logoHeight + "px");
+        document
+          .querySelector(":root")
+          .style.setProperty(
+            "--areaWidth",
+            innerWidth - options.logoSize + "px"
+          );
+        document
+          .querySelector(":root")
+          .style.setProperty("--logoWidth", options.logoSize + "px");
+        document
+          .querySelector(":root")
+          .style.setProperty("--logoHeight", logoHeight + "px");
+        let verticalSpeed = Math.round(innerHeight / options.speed) * 85;
+        let horizontalSpeed = Math.round(innerWidth / options.speed) * 85;
+        document.querySelector(
+          ".marquee-left-alternate"
+        ).style.animationPlayState = "paused";
+        document.querySelector(
+          ".marquee-down-alternate"
+        ).style.animationPlayState = "paused";
+        setTimeout(() => {
+          document.querySelector(
+            ".marquee-down-alternate"
+          ).style.animationPlayState = "running";
+          document.querySelector(
+            ".marquee-down-alternate"
+          ).style.animationDuration = verticalSpeed + "ms";
+          document.querySelector(
+            ".marquee-left-alternate"
+          ).style.animationPlayState = "running";
+          document.querySelector(
+            ".marquee-left-alternate"
+          ).style.animationDuration = horizontalSpeed + "ms";
+          intervalProcess.push(
+            setInterval(() => {
+              color = Math.floor(Math.random() * 360);
+              document.querySelector(
+                "img"
+              ).style.filter = `hue-rotate(${color}deg)`;
+            }, verticalSpeed)
+          );
+          intervalProcess.push(
+            setInterval(() => {
+              color = Math.floor(Math.random() * 360);
+              document.querySelector(
+                "img"
+              ).style.filter = `hue-rotate(${color}deg)`;
+            }, horizontalSpeed)
+          );
+        }, 800);
+      };
+      load();
+    </script>
+  </body>
+</html>
