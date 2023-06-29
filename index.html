@@ -123,7 +123,7 @@
           ).style.animationDuration = horizontalSpeed + "ms";
           intervalProcess.push(
             setInterval(() => {
-              color = Math.floor(Math.random() * 360);
+              color = Math.floor(Math.random() * 120);
               document.querySelector(
                 "img"
               ).style.filter = `hue-rotate(${color}deg)`;
@@ -131,7 +131,7 @@
           );
           intervalProcess.push(
             setInterval(() => {
-              color = Math.floor(Math.random() * 360);
+              color = Math.floor(Math.random() * 120) + 120;
               document.querySelector(
                 "img"
               ).style.filter = `hue-rotate(${color}deg)`;
